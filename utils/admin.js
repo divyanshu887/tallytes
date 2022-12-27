@@ -4,8 +4,9 @@ const path = require("path");
 const dotenv = require('dotenv');
 dotenv.config({path: path.join(__dirname, '../.env')});
 // console.log((process.env))
+const serviceAccount = require('../privatekey.json')
 admin.initializeApp({
-  credential: admin.credential.cert(JSON.parse(process.env.PRIVATE_SERVICE_KEY)),
+  credential: admin.credential.cert(serviceAccount),
   
   databaseURL: "https://notifications-92f9a-default-rtdb.firebaseio.com"
 });
