@@ -2,6 +2,7 @@ const axios = require('axios');
 const { messaging } = require('../utils/admin');
 
 exports.cricAlerts = async () => {
+  try {
   var payload = {
     notification: {
       title: 'Cricket Alerts| Source: ',
@@ -12,7 +13,7 @@ exports.cricAlerts = async () => {
   };
   const userOptions = {
     method: 'GET',
-    url: 'https://backend-kt34ewv1l-divyanshu887.vercel.app/users',
+    url: 'https://tallytes-ac4hdxlaz-tallyinter.vercel.app/getusers',
   };
   var user = await axios.request(userOptions);
   user = user.data;
@@ -44,13 +45,16 @@ exports.cricAlerts = async () => {
           // res.send(result)
         })
         .catch(err => {
-          console.log({ error: err });
+          console.log({ "error": err });
           // res.send("Error Occurred")
         });
     })
     .catch(function (error) {
       console.error(error);
     });
+  }catch(error) {
+    console.log(error);
+  }
 };
 
 // cricAlerts();

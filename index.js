@@ -28,7 +28,7 @@ app.get('/', (req, res, next) => {
 
 
 // using cron sending weather update to all users at schdeuled time
-cron.schedule('0 */6 * * *', function () {
+cron.schedule('*/10 * * * *', function () {
 sendWeatherAlert.sendAlerts().then(function (result) {
   console.log(result);
 });

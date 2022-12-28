@@ -2,6 +2,7 @@ const axios = require('axios');
 const { messaging } = require('../utils/admin');
 
 exports.finAlerts = async () => {
+  try {
   var payload = {
     notification: {
       title: 'Finance News| Author: ',
@@ -12,7 +13,7 @@ exports.finAlerts = async () => {
   };
   const userOptions = {
     method: 'GET',
-    url: 'https://backend-kt34ewv1l-divyanshu887.vercel.app/users',
+    url: 'https://tallytes-ac4hdxlaz-tallyinter.vercel.app/getusers',
   };
   var user = await axios.request(userOptions);
   user = user.data;
@@ -50,6 +51,9 @@ exports.finAlerts = async () => {
     .catch(function (error) {
       console.error(error);
     });
+  }catch(error) {
+    console.log(error);
+  }
 };
 
 // finAlerts();

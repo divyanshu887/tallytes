@@ -6,10 +6,11 @@ const wmocode = require('../utils/WMO.json');
 
 const options = {
   method: 'GET',
-  url: 'https://backend-kt34ewv1l-divyanshu887.vercel.app/users',
+  url: 'https://tallytes-ac4hdxlaz-tallyinter.vercel.app/getusers',
 };
 
 exports.sendAlerts = async () => {
+  try {
   // fetching user data
   var res = await axios.request(options);
    res =  res.data;
@@ -51,6 +52,9 @@ exports.sendAlerts = async () => {
         
   }
   return ( `${usercnt} users have received weather update`);
+}catch(error) {
+  console.log(error);
+}
 };
 
 // sendAlerts();
