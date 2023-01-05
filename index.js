@@ -1,7 +1,7 @@
 const schedule = require('node-schedule');
 const dotenv = require('dotenv');
 dotenv.config();
-const { messaging } = require('./utils/admin');
+const { messaging,db } = require('./utils/admin');
 const weatherapi = require('./routes/weatherUpdate');
 const cron = require('node-cron');
 const wmocode = require('./utils/WMO.json')
@@ -9,6 +9,7 @@ const sendWeatherAlert = require('./routes/weatherAlerts');
 const sendCricAlert = require('./routes/cricAlerts');
 const sendFinAlert = require('./routes/finAlerts');
 const sendEntAlert = require('./routes/entAlerts');
+const Update = require('./updateAnalytics');
 const express = require('express');
 const app = express();
 
@@ -21,14 +22,16 @@ app.use(cors());
 const { users } = require('./routes/users');
 app.get('/getusers', users);
 
+const { Analytics } = require('./routes/analytics');
+app.get('/Analytics', Analytics);
+
+
 app.get('/', (req, res, next) => {
   res.send('This is the express server');
 });
 
-
-
 // using cron sending weather update to all users at schdeuled time
-cron.schedule('*/10 * * * *', function () {
+cron.schedule('0 */6 * * *', function () {
 sendWeatherAlert.sendAlerts().then(function (result) {
   console.log(result);
 });
@@ -37,17 +40,21 @@ sendFinAlert.finAlerts()
 sendEntAlert.entAlerts()
 });
 
+app.get('/notify',(req,res)=>{
+  res.send("notify page");
+});
 
+// sending notification to selected participant
 app.post('/notify', (req, res) => {
   var currTime = new Date().toISOString;
-  schdeuleTime = new Date(req.body.schedule).toISOString;
-  if(schdeuleTime<= currTime)
+  var scheduleTime = new Date(req.body.schedule).toISOString;
+  if(scheduleTime<= currTime)
   {
-    schdeuleTime=new Date();
-    schdeuleTime.setMinutes(schdeuleTime.getMinutes() + 1);
-    console.log(schdeuleTime)
+    scheduleTime=new Date();
+    scheduleTime.setSeconds(scheduleTime.getSeconds() + 10);
+    // console.log(schdeuleTime)
   }
-  schedule.scheduleJob(schdeuleTime, () => {
+  schedule.scheduleJob(scheduleTime, () => {
     // console.log(req.body.token)
     var registrationToken = req.body.token;
     var payload = {
@@ -62,7 +69,9 @@ app.post('/notify', (req, res) => {
     messaging
       .sendMulticast(payload) 
       .then(response => {
-        console.log(response);
+        // Calling Analytics Update to Update the database
+          Update.AnalyticsUpdate(response,scheduleTime);
+          // console.log(scheduleTime);
         if (response.failureCount > 0) {
           const failedTokens = [];
           response.responses.forEach((resp, idx) => {
@@ -77,7 +86,7 @@ app.post('/notify', (req, res) => {
         console.log({ error: err});
       });
   });
-  res.send({ success: 'notification scheduled' });
+  res.send({ success: 'notification scheduled'});
 });
 
 // sending weather update notification to the user
@@ -95,6 +104,7 @@ app.post('/weatherupdate', async (req, res) => {
 // sending notification as per user activity
 app.post('/useractivity', async (req, res) => {
   // console.log(req.body);
+  var scheduleTime = new Date().toISOString;
   var result = "";
   var payload = {
     notification: {
@@ -134,6 +144,7 @@ app.post('/useractivity', async (req, res) => {
       .then(response => {
         console.log(response);
         res.send(result)
+        Update.AnalyticsUpdate(response,scheduleTime);
       })
       .catch(err => {
         console.log({ error: err });
@@ -143,3 +154,4 @@ app.post('/useractivity', async (req, res) => {
 });
 
 app.listen(5000, () => console.log(`Listening to port 5000`));
+

@@ -1,8 +1,12 @@
 const axios = require('axios');
 const { messaging } = require('../utils/admin');
+const Update = require('../updateAnalytics');
+
+const scheduleTime = new Date();
+// console.log(scheduleTime);
 
 exports.cricAlerts = async () => {
-  try {
+try{
   var payload = {
     notification: {
       title: 'Cricket Alerts| Source: ',
@@ -13,7 +17,7 @@ exports.cricAlerts = async () => {
   };
   const userOptions = {
     method: 'GET',
-    url: 'https://tallytes-ac4hdxlaz-tallyinter.vercel.app/getusers',
+    url: 'http://localhost:5000/getusers',
   };
   var user = await axios.request(userOptions);
   user = user.data;
@@ -37,15 +41,16 @@ exports.cricAlerts = async () => {
     .then(function (response) {
       payload.notification.body = response.data.headline;
       payload.notification.title += response.data.source;
-      console.log(payload,'ak');
+      // console.log(payload,'ak');
       messaging
         .sendMulticast(payload)
         .then(response => {
-          console.log(response);
+          // console.log(response);
+          Update.AnalyticsUpdate(response,scheduleTime);
           // res.send(result)
         })
         .catch(err => {
-          console.log({ "error": err });
+          console.log({ error: err });
           // res.send("Error Occurred")
         });
     })

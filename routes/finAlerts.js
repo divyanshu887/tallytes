@@ -1,5 +1,8 @@
 const axios = require('axios');
 const { messaging } = require('../utils/admin');
+const Update = require('../updateAnalytics');
+
+const scheduleTime = new Date();
 
 exports.finAlerts = async () => {
   try {
@@ -13,7 +16,7 @@ exports.finAlerts = async () => {
   };
   const userOptions = {
     method: 'GET',
-    url: 'https://tallytes-ac4hdxlaz-tallyinter.vercel.app/getusers',
+    url: 'http://localhost:5000/getusers',
   };
   var user = await axios.request(userOptions);
   user = user.data;
@@ -43,6 +46,7 @@ exports.finAlerts = async () => {
         .sendMulticast(payload)
         .then(response => {
           console.log(response);
+          Update.AnalyticsUpdate(response,scheduleTime);
         })
         .catch(err => {
           console.log({ error: err });
@@ -51,7 +55,7 @@ exports.finAlerts = async () => {
     .catch(function (error) {
       console.error(error);
     });
-  }catch(error) {
+  } catch (error) {
     console.log(error);
   }
 };
