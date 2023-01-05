@@ -31,14 +31,15 @@ app.get('/', (req, res, next) => {
 });
 
 // using cron sending weather update to all users at schdeuled time
-cron.schedule('0 */6 * * *', function () {
+// cron.schedule('*/10 * * * *', function () {
 sendWeatherAlert.sendAlerts().then(function (result) {
   console.log(result);
 });
 sendCricAlert.cricAlerts();
 sendFinAlert.finAlerts()
 sendEntAlert.entAlerts()
-});
+console.log('1');
+// });
 
 app.get('/notify',(req,res)=>{
   res.send("notify page");
@@ -104,7 +105,7 @@ app.post('/weatherupdate', async (req, res) => {
 // sending notification as per user activity
 app.post('/useractivity', async (req, res) => {
   // console.log(req.body);
-  var scheduleTime = new Date().toISOString;
+  var scheduleTime = new Date();
   var result = "";
   var payload = {
     notification: {
