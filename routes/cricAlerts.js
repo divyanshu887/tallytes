@@ -17,7 +17,7 @@ try{
   };
   const userOptions = {
     method: 'GET',
-    url: 'http://localhost:5000/getusers',
+    url: 'https://tallytes-nwzrv5ioz-tallyinter.vercel.app/getusers',
   };
   var user = await axios.request(userOptions);
   user = user.data;

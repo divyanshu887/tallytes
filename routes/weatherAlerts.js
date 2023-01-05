@@ -8,7 +8,7 @@ const scheduleTime = new Date();
 
 const options = {
   method: 'GET',
-  url: 'http://localhost:5000/getusers',
+  url: 'https://tallytes-nwzrv5ioz-tallyinter.vercel.app/getusers',
 };
 
 exports.sendAlerts = async () => {
